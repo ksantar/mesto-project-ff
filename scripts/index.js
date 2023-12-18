@@ -1,6 +1,5 @@
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
-const likeButton = cardTemplate.querySelector('.card__like-button');
 
 // @todo: DOM узлы
 let content = document.querySelector('.content');
@@ -25,6 +24,6 @@ function removeCard (element) {
 }
 
 // @todo: Вывести карточки на страницу
-for (let i = 0; i < initialCards.length; i++) {
-  addCard(initialCards[i].link, initialCards[i].name);
-}
+initialCards.forEach(function (elem) {
+  addCard(elem.link, elem.name)
+})
