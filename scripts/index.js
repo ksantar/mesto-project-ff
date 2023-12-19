@@ -22,7 +22,7 @@ function createCard(imageSource, titleValue, callback) {
 
 // @todo: Функция удаления карточки
 function removeCard (event) {
-  event.target.parentNode.remove();
+  event.target.closest('.places__item').remove();
 }
 
 // @todo: Вывести карточки на страницу
