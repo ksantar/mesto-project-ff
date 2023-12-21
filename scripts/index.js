@@ -24,6 +24,6 @@ const createCard = (imageSource, titleValue, deleteCard) => {
 const removeCard = event => event.target.closest('.places__item').remove();
 
 // @todo: Вывести карточки на страницу
-initialCards.forEach(function (elem) {
+initialCards.forEach(elem => {
   placesList.append(createCard(elem.link, elem.name, removeCard));
 })
