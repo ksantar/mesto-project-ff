@@ -1,33 +1,27 @@
 import '../pages/index.css';
-import {initialCards} from '../scripts/cards.js'
-// @todo: Темплейт карточки
-const cardTemplate = document.querySelector('#card-template').content;
+import { createCard, removeCard } from '../scripts/card.js';
+import initialCards from '../scripts/cards.js';
+import { openModal, closeModal } from '../scripts/modal.js'
 
-// @todo: DOM узлы
 const content = document.querySelector('.content');
 const placesList = content.querySelector('.places__list');
+// Добавить DOM-элементы модальных окон и кнопок
+const editButton = document.querySelector('.profile__edit-button')
+const editPopup = document.querySelector('.popup_type_edit');
+const addButton = document.querySelector('.profile__add-button')
+const addPopup = document.querySelector('.popup_type_new-card');
+const imagePopup = document.querySelector('.popup_type_image');
 
-// @todo: Функция создания карточки
-const createCard = (imageSource, titleValue, deleteCard) => {
-  const cardElement = cardTemplate
+const cardTemplate2 = document.querySelector('#card-template').content;
+const cardElement2 = cardTemplate2
     .querySelector('.places__item')
     .cloneNode(true);
-  const cardImage = cardElement.querySelector('.card__image');
-  const cardTitle = cardElement.querySelector('.card__title');
-  const deleteButton = cardElement.querySelector('.card__delete-button');
+const cardImage2 = cardElement2.querySelector('.card__image');
 
-  cardImage.src = imageSource;
-  cardImage.alt = titleValue;
-  cardTitle.textContent = titleValue;
-
-  deleteButton.addEventListener('click', deleteCard);
-  return cardElement;
-};
-
-// @todo: Функция удаления карточки
-const removeCard = (event) => event.target.closest('.places__item').remove();
-
-// @todo: Вывести карточки на страницу
 initialCards.forEach((elem) => {
   placesList.append(createCard(elem.link, elem.name, removeCard));
 });
+
+// Добавить обработчики событий
+editButton.addEventListener('click', () => openModal(editPopup))
+addButton.addEventListener('click', () => openModal(addPopup))
