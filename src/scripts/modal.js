@@ -1,12 +1,26 @@
 // Функции работы с модальными окнами
-const editPopup = document.querySelector('.popup_type_edit');
-const addPopup = document.querySelector('.popup_type_new-card');
-const imagePopup = document.querySelector('.popup_type_image');
-
 const openModal = (element) => {
-  element.classList.add('popup_is-opened')
+  element.classList.add('popup_is-opened');
+  element.addEventListener('click', closeOverlay);
+  document.addEventListener('keydown', closeByKey);
 };
 
-const closeModal = (evt) => {};
+const closeModal = (element) => {
+  element.classList.remove('popup_is-opened');
+  element.removeEventListener('click', closeOverlay);
+  document.removeEventListener('keydown', closeByKey);
+};
+
+const closeOverlay = (evt) => {
+  if (evt.target === evt.currentTarget) {
+    closeModal(evt.currentTarget);
+  }
+};
+
+const closeByKey = (evt) => {
+  if (evt.key === 'Escape') {
+    closeModal(document.querySelector('.popup_is-opened'));
+  }
+};
 
 export { openModal, closeModal };
