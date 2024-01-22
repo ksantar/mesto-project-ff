@@ -11,6 +11,7 @@ const profileDescription = document.querySelector('.profile__description');
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 // Попапы
+const popups = document.querySelectorAll('.popup');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const popupTypeNewCard = document.querySelector('.popup_type_new-card');
 const popupTypeImage = document.querySelector('.popup_type_image');
@@ -42,8 +43,10 @@ const openFullImage = (link, title) => {
 // Функция редактирования профиля
 const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
+  const name = nameInput.value;
+  const job = jobInput.value;
+  profileTitle.textContent = name;
+  profileDescription.textContent = job;
   closeModal(popupTypeEdit);
 }
 
@@ -52,10 +55,15 @@ const handleNewCardFormSubmit = (evt) => {
   evt.preventDefault();
   const url = urlInput.value;
   const place = placeInput.value;
-  placesList.prepend(createCard(urlInput.value, placeInput.value, removeCard, likeCard, () => openFullImage(url, place)));
+  placesList.prepend(createCard(url, place, removeCard, likeCard, () => openFullImage(url, place)));
   addFormElement.reset();
   closeModal(popupTypeNewCard);
 }
+
+// Добавление всем попапам класса для плавности
+popups.forEach(element => {
+  element.classList.add('popup_is-animated');
+});
 
 // Начальные карточки
 initialCards.forEach((elem) => {
