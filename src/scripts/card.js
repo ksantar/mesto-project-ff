@@ -1,4 +1,4 @@
-const createCard = (imageSource, titleValue, deleteCard, like, openCard) => {
+const createCard = (cardData, deleteCard, like, openCard) => {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate
     .querySelector('.places__item')
@@ -8,9 +8,9 @@ const createCard = (imageSource, titleValue, deleteCard, like, openCard) => {
   const deleteButton = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
 
-  cardImage.src = imageSource;
-  cardImage.alt = titleValue;
-  cardTitle.textContent = titleValue;
+  cardImage.src = cardData.link;
+  cardImage.alt = cardData.name;
+  cardTitle.textContent = cardData.name;
 
   cardImage.addEventListener('click', openCard);
 

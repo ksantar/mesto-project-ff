@@ -1,7 +1,6 @@
 // Функции работы с модальными окнами
 const openModal = (element) => {
   element.classList.add('popup_is-opened');
-  element.addEventListener('click', closeByOverlay);
   document.addEventListener('keydown', closeByKey);
 };
 
@@ -23,4 +22,4 @@ const closeByKey = (evt) => {
   }
 };
 
-export { openModal, closeModal };
+export { openModal, closeModal, closeByOverlay };
