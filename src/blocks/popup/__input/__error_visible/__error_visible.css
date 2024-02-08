@@ -1,0 +1,7 @@
+.popup__input__error_visible {
+  position: absolute;
+  
+  display: block;
+  color: #ff0000;
+  font-size: 12px;
+}

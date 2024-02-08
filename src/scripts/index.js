@@ -2,15 +2,18 @@ import '../pages/index.css';
 import { createCard, removeCard, likeCard } from '../scripts/card.js';
 import initialCards from '../scripts/cards.js';
 import { openModal, closeModal, closeByOverlay } from '../scripts/modal.js';
+import { enableValidation, clearValidation } from '../scripts/validation.js';
 
 const content = document.querySelector('.content');
 const placesList = content.querySelector('.places__list');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+
 // Кнопки
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 const buttonCloseList = document.querySelectorAll('.popup__close');
+
 // Попапы
 const popups = document.querySelectorAll('.popup');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
@@ -98,3 +101,5 @@ editFormElement.addEventListener('submit', handleEditFormSubmit);
 
 // Сабмит добавления новой карточки
 addFormElement.addEventListener('submit', handleNewCardFormSubmit);
+
+enableValidation()
