@@ -76,8 +76,14 @@ const toggleButtonState = (inputList, buttonElement) => {
 };
 
 // Функция очистки валидации
-const clearValidation = (formElement, options) => {
-  
+const clearValidation = (formElement) => {
+  const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
+  const button = formElement.querySelector('.popup__button')
+
+  inputList.forEach((input) => {
+    hideInputError(formElement, input);
+  })
+  button.classList.add('popup__button_inactive')
 };
 
 export { enableValidation, clearValidation };

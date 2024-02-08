@@ -83,11 +83,17 @@ initialCards.forEach((elem) => {
 
 // Открытие попапов
 editButton.addEventListener('click', () => {
-  openModal(popupTypeEdit)
+  clearValidation(editFormElement);
+  openModal(popupTypeEdit);
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 });
-addButton.addEventListener('click', () => openModal(popupTypeNewCard));
+
+addButton.addEventListener('click', () => {
+  clearValidation(popupTypeNewCard);
+  openModal(popupTypeNewCard)
+  addFormElement.reset()
+});
 
 // Закрытие попапов
 buttonCloseList.forEach((btn) => {
