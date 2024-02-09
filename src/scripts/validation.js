@@ -49,8 +49,8 @@ const setEventListeners = (formElement) => {
 };
 
 // Функция добавления setEventListeners всем формам
-const enableValidation = () => {
-  const formList = Array.from(document.querySelectorAll('.popup__form'));
+const enableValidation = (config) => {
+  const formList = Array.from(document.querySelectorAll(config.formSelector));
 
   formList.forEach((formElement) => {
     setEventListeners(formElement);
@@ -76,14 +76,14 @@ const toggleButtonState = (inputList, buttonElement) => {
 };
 
 // Функция очистки валидации
-const clearValidation = (formElement) => {
-  const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-  const button = formElement.querySelector('.popup__button')
+const clearValidation = (formElement, config) => {
+  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const button = formElement.querySelector(config.submitButtonSelector)
 
   inputList.forEach((input) => {
     hideInputError(formElement, input);
   })
-  button.classList.add('popup__button_inactive')
+  button.classList.add(config.inactiveButtonClass)
 };
 
 export { enableValidation, clearValidation };

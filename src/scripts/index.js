@@ -3,6 +3,7 @@ import { createCard, removeCard, likeCard } from '../scripts/card.js';
 import initialCards from '../scripts/cards.js';
 import { openModal, closeModal, closeByOverlay } from '../scripts/modal.js';
 import { enableValidation, clearValidation } from '../scripts/validation.js';
+import { getCadrs, getUsers, editProfile, postNewCard } from './api.js';
 
 const content = document.querySelector('.content');
 const placesList = content.querySelector('.places__list');
@@ -23,7 +24,9 @@ const popupTypeImage = document.querySelector('.popup_type_image');
 // Элементы формы редактирования
 const editFormElement = popupTypeEdit.querySelector('.popup__form');
 const nameInput = editFormElement.querySelector('.popup__input_type_name');
-const jobInput = editFormElement.querySelector('.popup__input_type_description');
+const jobInput = editFormElement.querySelector(
+  '.popup__input_type_description'
+);
 
 // Элементы формы добавления новой карточки
 const addFormElement = popupTypeNewCard.querySelector('.popup__form');
@@ -55,13 +58,11 @@ const handleEditFormSubmit = (evt) => {
 // Функция добавления новой карточки
 const handleNewCardFormSubmit = (evt) => {
   evt.preventDefault();
-  const cardData = {}
+  const cardData = {};
   cardData.link = urlInput.value;
   cardData.name = placeInput.value;
   placesList.prepend(
-    createCard(cardData, removeCard, likeCard, () =>
-      openFullImage(cardData)
-    )
+    createCard(cardData, removeCard, likeCard, () => openFullImage(cardData))
   );
   addFormElement.reset();
   closeModal(popupTypeNewCard);
@@ -73,26 +74,41 @@ popups.forEach((element) => {
 });
 
 // Начальные карточки
-initialCards.forEach((elem) => {
-  placesList.append(
-    createCard(elem, removeCard, likeCard, () =>
-      openFullImage(elem)
-    )
-  );
-});
+Promise.all([getCadrs(), getUsers()])
+.then(([cards, users]) => {
+  cards.forEach((elem) => {
+    placesList.append(
+      createCard(elem, removeCard, likeCard, () => openFullImage(elem))
+    );
+  });
+})
 
 // Открытие попапов
 editButton.addEventListener('click', () => {
-  clearValidation(editFormElement);
+  clearValidation(editFormElement, {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_inactive',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible',
+  });
   openModal(popupTypeEdit);
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 });
 
 addButton.addEventListener('click', () => {
-  clearValidation(popupTypeNewCard);
-  openModal(popupTypeNewCard)
-  addFormElement.reset()
+  clearValidation(popupTypeNewCard, {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_inactive',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible',
+  });
+  openModal(popupTypeNewCard);
+  addFormElement.reset();
 });
 
 // Закрытие попапов
@@ -108,4 +124,11 @@ editFormElement.addEventListener('submit', handleEditFormSubmit);
 // Сабмит добавления новой карточки
 addFormElement.addEventListener('submit', handleNewCardFormSubmit);
 
-enableValidation()
+enableValidation({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_inactive',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+});
