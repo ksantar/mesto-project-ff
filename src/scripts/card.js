@@ -7,6 +7,7 @@ const createCard = (cardData, deleteCard, like, openCard) => {
   const cardTitle = cardElement.querySelector('.card__title');
   const deleteButton = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
+  const likeCount = cardElement.querySelector('.card__like-count');
 
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
@@ -16,7 +17,15 @@ const createCard = (cardData, deleteCard, like, openCard) => {
 
   likeButton.addEventListener('click', like);
 
-  deleteButton.addEventListener('click', deleteCard);
+  likeCount.textContent = cardData.likes.length;
+
+  // Если карточка не моя, то скрыть кнопку удаления карточки
+  if (cardData.owner._id === '989164bdc393fda019eca7de') {
+    deleteButton.addEventListener('click', deleteCard);
+  } else {
+    deleteButton.style.visibility = 'hidden';
+  }
+
   return cardElement;
 };
 
