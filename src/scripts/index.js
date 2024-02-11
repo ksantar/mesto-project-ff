@@ -3,12 +3,20 @@ import { createCard, removeCard, likeCard } from '../scripts/card.js';
 import initialCards from '../scripts/cards.js';
 import { openModal, closeModal, closeByOverlay } from '../scripts/modal.js';
 import { enableValidation, clearValidation } from '../scripts/validation.js';
-import { getCadrs, getUsers, editProfile, postNewCard } from './api.js';
+import {
+  getCadrs,
+  getUsers,
+  getMyData,
+  editProfile,
+  postNewCard,
+  deleteCard,
+} from './api.js';
 
 const content = document.querySelector('.content');
 const placesList = content.querySelector('.places__list');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const profileAvatar = document.querySelector('.profile__image');
 
 // Кнопки
 const editButton = document.querySelector('.profile__edit-button');
@@ -37,6 +45,16 @@ const urlInput = addFormElement.querySelector('.popup__input_type_url');
 const cardPicture = popupTypeImage.querySelector('.popup__image');
 const cardName = popupTypeImage.querySelector('.popup__caption');
 
+// Конфиг
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_inactive',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+};
+
 // Функция открытия картинки
 const openFullImage = (cardData) => {
   openModal(popupTypeImage);
@@ -48,11 +66,11 @@ const openFullImage = (cardData) => {
 // Функция редактирования профиля
 const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
-  const name = nameInput.value;
-  const job = jobInput.value;
-  profileTitle.textContent = name;
-  profileDescription.textContent = job;
-  closeModal(popupTypeEdit);
+  editProfile(nameInput, jobInput, profileAvatar).then((data) => {
+    profileTitle.textContent = data.name;
+    profileDescription.textContent = data.about;
+    closeModal(popupTypeEdit);
+  });
 };
 
 // Функция добавления новой карточки
@@ -74,39 +92,24 @@ popups.forEach((element) => {
 });
 
 // Начальные карточки
-Promise.all([getCadrs(), getUsers()])
-.then(([cards, users]) => {
+Promise.all([getCadrs(), getUsers()]).then(([cards, users]) => {
   cards.forEach((elem) => {
     placesList.append(
       createCard(elem, removeCard, likeCard, () => openFullImage(elem))
     );
   });
-})
+});
 
 // Открытие попапов
 editButton.addEventListener('click', () => {
-  clearValidation(editFormElement, {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_inactive',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible',
-  });
+  clearValidation(editFormElement, validationConfig);
   openModal(popupTypeEdit);
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 });
 
 addButton.addEventListener('click', () => {
-  clearValidation(popupTypeNewCard, {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_inactive',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible',
-  });
+  clearValidation(popupTypeNewCard, validationConfig);
   openModal(popupTypeNewCard);
   addFormElement.reset();
 });
@@ -124,11 +127,12 @@ editFormElement.addEventListener('submit', handleEditFormSubmit);
 // Сабмит добавления новой карточки
 addFormElement.addEventListener('submit', handleNewCardFormSubmit);
 
-enableValidation({
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_inactive',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible',
+// Вызов валидации
+enableValidation(validationConfig);
+
+// Получение данных профиля
+getMyData().then((data) => {
+  profileTitle.textContent = data.name;
+  profileDescription.textContent = data.about;
+  profileAvatar.style = `background-image: url('${data.avatar}')`;
 });

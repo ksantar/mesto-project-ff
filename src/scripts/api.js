@@ -1,14 +1,20 @@
+const fetchConfig = {
+  BASE_URL: 'https://nomoreparties.co/v1/wff-cohort-6/',
+  autorisation: '70ed6172-e461-46e4-96d0-911b4afd383e',
+
+}
+
 // Получание карточек
 const getCadrs = () => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-6/cards', {
+  return fetch(`${fetchConfig.BASE_URL}cards`, {
     method: 'GET',
     headers: {
-      authorization: '70ed6172-e461-46e4-96d0-911b4afd383e',
+      authorization: fetchConfig.autorisation,
     },
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error('Ошибка');
+        throw new Error(`Ошибка: ${response.status}`);
       }
 
       return response.json();
@@ -20,15 +26,35 @@ const getCadrs = () => {
 
 // Получение пользователей
 const getUsers = () => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-6/users', {
+  return fetch(`${fetchConfig.BASE_URL}users`, {
     method: 'GET',
     headers: {
-      authorization: '70ed6172-e461-46e4-96d0-911b4afd383e',
+      authorization: fetchConfig.autorisation,
     },
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error('Ошибка');
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+
+      return response.json();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+// Получит мои данные
+const getMyData = () => {
+  return fetch(`${fetchConfig.BASE_URL}users/me`, {
+    method: 'GET',
+    headers: {
+      authorization: fetchConfig.autorisation,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
       }
 
       return response.json();
@@ -39,21 +65,22 @@ const getUsers = () => {
 };
 
 // Редактирование профиля
-const editProfile = () => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-6/users/me', {
+const editProfile = (userName, userAbout, userAvatar) => {
+  return fetch(`${fetchConfig.BASE_URL}users/me`, {
     method: 'PATCH',
     headers: {
-      authorization: '70ed6172-e461-46e4-96d0-911b4afd383e',
+      authorization: fetchConfig.autorisation,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      name: 'Александр',
-      about: 'Студент',
+      name: userName.value,
+      about: userAbout.value,
+      avatar: userAvatar
     }),
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error('Ошибка');
+        throw new Error(`Ошибка: ${response.status}`);
       }
 
       return response.json();
@@ -65,10 +92,10 @@ const editProfile = () => {
 
 // Добавление новой карточки
 const postNewCard = (cardTitle, cardLink) => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-6/cards', {
+  return fetch(`${fetchConfig.BASE_URL}cards`, {
     method: 'POST',
     headers: {
-      authorization: '70ed6172-e461-46e4-96d0-911b4afd383e',
+      authorization: fetchConfig.autorisation,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -78,7 +105,7 @@ const postNewCard = (cardTitle, cardLink) => {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error('Ошибка');
+        throw new Error(`Ошибка: ${response.status}`);
       }
 
       return response.json();
@@ -88,4 +115,24 @@ const postNewCard = (cardTitle, cardLink) => {
     });
 };
 
-export { getCadrs, getUsers, editProfile, postNewCard };
+// Удаление карточки
+const deleteCard = (cardId) => {
+  return fetch(`${fetchConfig.BASE_URL}cards/${cardId}`, {
+    method: 'DELETE',
+    headers: {
+      authorization: fetchConfig.autorisation,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+
+      return response.json();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export { getCadrs, getUsers, getMyData, editProfile, postNewCard, deleteCard };

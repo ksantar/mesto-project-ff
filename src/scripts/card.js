@@ -1,4 +1,6 @@
-const createCard = (cardData, deleteCard, like, openCard) => {
+import { deleteCard } from './api.js';
+
+const createCard = (cardData, deleteCard2, like, openCard) => {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate
     .querySelector('.places__item')
@@ -8,6 +10,7 @@ const createCard = (cardData, deleteCard, like, openCard) => {
   const deleteButton = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
   const likeCount = cardElement.querySelector('.card__like-count');
+  const cardDataId = cardData._id;
 
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
@@ -21,15 +24,21 @@ const createCard = (cardData, deleteCard, like, openCard) => {
 
   // Если карточка не моя, то скрыть кнопку удаления карточки
   if (cardData.owner._id === '989164bdc393fda019eca7de') {
-    deleteButton.addEventListener('click', deleteCard);
+    deleteButton.addEventListener('click', (evt) =>
+      deleteCard2(evt, cardDataId)
+    );
   } else {
-    deleteButton.style.visibility = 'hidden';
+    deleteButton.setAttribute('hidden', true);
   }
 
   return cardElement;
 };
 
-const removeCard = (event) => event.target.closest('.places__item').remove();
+const removeCard = (event, cardId) => {
+  deleteCard(cardId).then(() => {
+    event.target.closest('.places__item').remove();
+  });
+};
 
 const likeCard = (event) =>
   event.target.classList.toggle('card__like-button_is-active');
