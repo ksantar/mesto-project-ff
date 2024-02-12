@@ -97,7 +97,7 @@ const editAvatar = (userAvatar) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      avatar: userAvatar,
+      avatar: userAvatar.value,
     }),
   })
     .then((response) => {
@@ -121,8 +121,8 @@ const postNewCard = (cardTitle, cardLink) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      name: cardTitle,
-      link: cardLink,
+      name: cardTitle.value,
+      link: cardLink.value,
     }),
   })
     .then((response) => {

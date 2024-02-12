@@ -1,6 +1,6 @@
 import { deleteCard, likeCardFetch, unlikeCardFetch } from './api.js';
 
-const createCard = (cardData, deleteCard2, like, openCard) => {
+const createCard = (cardData, remove, like, openCard) => {
   const cardOwnerId = '989164bdc393fda019eca7de';
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate
@@ -32,7 +32,7 @@ const createCard = (cardData, deleteCard2, like, openCard) => {
   // Если карточка не моя, то скрыть кнопку удаления карточки
   if (cardData.owner._id === cardOwnerId) {
     deleteButton.addEventListener('click', (evt) => {
-      deleteCard2(evt, cardDataId);
+      remove(evt, cardDataId);
     });
   } else {
     deleteButton.setAttribute('hidden', true);

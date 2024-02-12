@@ -1,6 +1,5 @@
 import '../pages/index.css';
 import { createCard, removeCard, likeCard } from '../scripts/card.js';
-import initialCards from '../scripts/cards.js';
 import { openModal, closeModal, closeByOverlay } from '../scripts/modal.js';
 import { enableValidation, clearValidation } from '../scripts/validation.js';
 import {
@@ -9,10 +8,7 @@ import {
   getMyData,
   editProfile,
   postNewCard,
-  deleteCard,
   editAvatar,
-  likeCardFetch,
-  unlikeCardFetch,
 } from './api.js';
 
 const content = document.querySelector('.content');
@@ -34,6 +30,7 @@ const popupTypeNewCard = document.querySelector('.popup_type_new-card');
 const popupTypeImage = document.querySelector('.popup_type_image');
 
 // Элементы попапа смены аватара
+const avatarFormElement = popupTypeAvatar.querySelector('.popup__form');
 const avatarUrlInput = popupTypeAvatar.querySelector('.popup__input_type_url');
 const saveButton = document.querySelector('.profile__edit-button');
 
@@ -71,6 +68,15 @@ const openFullImage = (cardData) => {
   cardName.textContent = cardData.name;
 };
 
+// Функция редактирования аватара
+const handleEditAvatarSubmit = (evt) => {
+  evt.preventDefault();
+  editAvatar(avatarUrlInput).then((data) => {
+    profileAvatar.style = `background-image: url('${data.avatar}')`;
+    closeModal(popupTypeAvatar);
+  });
+};
+
 // Функция редактирования профиля
 const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
@@ -84,14 +90,11 @@ const handleEditFormSubmit = (evt) => {
 // Функция добавления новой карточки
 const handleNewCardFormSubmit = (evt) => {
   evt.preventDefault();
-  const cardData = {};
-  cardData.link = urlInput.value;
-  cardData.name = placeInput.value;
-  placesList.prepend(
-    createCard(cardData, removeCard, likeCard, () => openFullImage(cardData))
-  );
-  addFormElement.reset();
-  closeModal(popupTypeNewCard);
+  postNewCard(placeInput, urlInput).then((data) => {
+    placesList.prepend(createCard(data, removeCard, likeCard, () => openFullImage(data)))
+    addFormElement.reset();
+    closeModal(popupTypeNewCard);
+  })
 };
 
 // Добавление всем попапам класса для плавности
@@ -112,6 +115,9 @@ Promise.all([getCadrs(), getUsers()]).then(([cards, users]) => {
 profileAvatar.addEventListener('click', () => {
   clearValidation(popupTypeAvatar, validationConfig);
   openModal(popupTypeAvatar);
+  getMyData().then((data) => {
+    avatarUrlInput.value = data.avatar
+  })
 });
 
 editButton.addEventListener('click', () => {
@@ -133,6 +139,9 @@ buttonCloseList.forEach((btn) => {
   popup.addEventListener('mousedown', closeByOverlay);
   btn.addEventListener('click', () => closeModal(popup));
 });
+
+// Сабмит изменения аватара
+avatarFormElement.addEventListener('submit', handleEditAvatarSubmit);
 
 // Сабмит редактирования профиля
 editFormElement.addEventListener('submit', handleEditFormSubmit);
