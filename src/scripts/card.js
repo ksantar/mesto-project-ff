@@ -1,6 +1,7 @@
-import { deleteCard } from './api.js';
+import { deleteCard, likeCardFetch, unlikeCardFetch } from './api.js';
 
 const createCard = (cardData, deleteCard2, like, openCard) => {
+  const cardOwnerId = '989164bdc393fda019eca7de';
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate
     .querySelector('.places__item')
@@ -16,20 +17,33 @@ const createCard = (cardData, deleteCard2, like, openCard) => {
   cardImage.alt = cardData.name;
   cardTitle.textContent = cardData.name;
 
-  cardImage.addEventListener('click', openCard);
-
-  likeButton.addEventListener('click', like);
-
   likeCount.textContent = cardData.likes.length;
 
+  cardImage.addEventListener('click', openCard);
+
+  likeButton.addEventListener('click', (evt) => {
+    if (evt.target.classList.contains('card__like-button_is-active')) {
+      like(evt, cardDataId, likeCount);
+    } else {
+      like(evt, cardDataId, likeCount);
+    }
+  });
+
   // Если карточка не моя, то скрыть кнопку удаления карточки
-  if (cardData.owner._id === '989164bdc393fda019eca7de') {
-    deleteButton.addEventListener('click', (evt) =>
-      deleteCard2(evt, cardDataId)
-    );
+  if (cardData.owner._id === cardOwnerId) {
+    deleteButton.addEventListener('click', (evt) => {
+      deleteCard2(evt, cardDataId);
+    });
   } else {
     deleteButton.setAttribute('hidden', true);
   }
+
+  // Проверка на наличие лайка
+  cardData.likes.forEach((elem) => {
+    if (elem._id === cardOwnerId) {
+      likeButton.classList.add('card__like-button_is-active');
+    }
+  });
 
   return cardElement;
 };
@@ -40,7 +54,19 @@ const removeCard = (event, cardId) => {
   });
 };
 
-const likeCard = (event) =>
-  event.target.classList.toggle('card__like-button_is-active');
+const likeCard = (event, cardId, count) => {
+  if (!event.target.classList.contains('card__like-button_is-active')) {
+    likeCardFetch(cardId).then((data) => {
+      event.target.classList.add('card__like-button_is-active');
+      count.textContent = data.likes.length;
+    })
+  } else {
+    unlikeCardFetch(cardId).then((data) => {
+      event.target.classList.remove('card__like-button_is-active');
+      count.textContent = data.likes.length;
+    })
+  }
+};
+// event.target.classList.toggle('card__like-button_is-active');
 
 export { createCard, removeCard, likeCard };

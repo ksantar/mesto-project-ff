@@ -10,13 +10,16 @@ import {
   editProfile,
   postNewCard,
   deleteCard,
+  editAvatar,
+  likeCardFetch,
+  unlikeCardFetch,
 } from './api.js';
 
 const content = document.querySelector('.content');
 const placesList = content.querySelector('.places__list');
-const profileTitle = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
-const profileAvatar = document.querySelector('.profile__image');
+const profileTitle = content.querySelector('.profile__title');
+const profileDescription = content.querySelector('.profile__description');
+const profileAvatar = content.querySelector('.profile__image');
 
 // Кнопки
 const editButton = document.querySelector('.profile__edit-button');
@@ -25,9 +28,14 @@ const buttonCloseList = document.querySelectorAll('.popup__close');
 
 // Попапы
 const popups = document.querySelectorAll('.popup');
+const popupTypeAvatar = document.querySelector('.popup_type_avatar');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const popupTypeNewCard = document.querySelector('.popup_type_new-card');
 const popupTypeImage = document.querySelector('.popup_type_image');
+
+// Элементы попапа смены аватара
+const avatarUrlInput = popupTypeAvatar.querySelector('.popup__input_type_url');
+const saveButton = document.querySelector('.profile__edit-button');
 
 // Элементы формы редактирования
 const editFormElement = popupTypeEdit.querySelector('.popup__form');
@@ -66,7 +74,7 @@ const openFullImage = (cardData) => {
 // Функция редактирования профиля
 const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
-  editProfile(nameInput, jobInput, profileAvatar).then((data) => {
+  editProfile(nameInput, jobInput).then((data) => {
     profileTitle.textContent = data.name;
     profileDescription.textContent = data.about;
     closeModal(popupTypeEdit);
@@ -101,6 +109,11 @@ Promise.all([getCadrs(), getUsers()]).then(([cards, users]) => {
 });
 
 // Открытие попапов
+profileAvatar.addEventListener('click', () => {
+  clearValidation(popupTypeAvatar, validationConfig);
+  openModal(popupTypeAvatar);
+});
+
 editButton.addEventListener('click', () => {
   clearValidation(editFormElement, validationConfig);
   openModal(popupTypeEdit);
