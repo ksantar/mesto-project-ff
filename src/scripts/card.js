@@ -59,12 +59,12 @@ const likeCard = (event, cardId, count) => {
     likeCardFetch(cardId).then((data) => {
       event.target.classList.add('card__like-button_is-active');
       count.textContent = data.likes.length;
-    })
+    });
   } else {
     unlikeCardFetch(cardId).then((data) => {
       event.target.classList.remove('card__like-button_is-active');
       count.textContent = data.likes.length;
-    })
+    });
   }
 };
 // event.target.classList.toggle('card__like-button_is-active');

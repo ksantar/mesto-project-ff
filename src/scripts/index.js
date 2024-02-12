@@ -31,8 +31,10 @@ const popupTypeImage = document.querySelector('.popup_type_image');
 
 // Элементы попапа смены аватара
 const avatarFormElement = popupTypeAvatar.querySelector('.popup__form');
-const avatarUrlInput = popupTypeAvatar.querySelector('.popup__input_type_url');
-const saveButton = document.querySelector('.profile__edit-button');
+const avatarUrlInput = avatarFormElement.querySelector(
+  '.popup__input_type_url'
+);
+const saveButton = avatarFormElement.querySelector('.popup__button');
 
 // Элементы формы редактирования
 const editFormElement = popupTypeEdit.querySelector('.popup__form');
@@ -40,11 +42,13 @@ const nameInput = editFormElement.querySelector('.popup__input_type_name');
 const jobInput = editFormElement.querySelector(
   '.popup__input_type_description'
 );
+const editProfileButton = editFormElement.querySelector('.popup__button');
 
 // Элементы формы добавления новой карточки
 const addFormElement = popupTypeNewCard.querySelector('.popup__form');
 const placeInput = addFormElement.querySelector('.popup__input_type_card-name');
 const urlInput = addFormElement.querySelector('.popup__input_type_url');
+const newCardButton = addFormElement.querySelector('.popup__button');
 
 // Элементы попапа карточки
 const cardPicture = popupTypeImage.querySelector('.popup__image');
@@ -71,30 +75,54 @@ const openFullImage = (cardData) => {
 // Функция редактирования аватара
 const handleEditAvatarSubmit = (evt) => {
   evt.preventDefault();
-  editAvatar(avatarUrlInput).then((data) => {
-    profileAvatar.style = `background-image: url('${data.avatar}')`;
-    closeModal(popupTypeAvatar);
-  });
+  renderLoading(true, saveButton);
+  editAvatar(avatarUrlInput)
+    .then((data) => {
+      profileAvatar.style = `background-image: url('${data.avatar}')`;
+      closeModal(popupTypeAvatar);
+    })
+    .finally(() => {
+      renderLoading(false, saveButton);
+    });
 };
 
 // Функция редактирования профиля
 const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
-  editProfile(nameInput, jobInput).then((data) => {
-    profileTitle.textContent = data.name;
-    profileDescription.textContent = data.about;
-    closeModal(popupTypeEdit);
-  });
+  renderLoading(true, editProfileButton);
+  editProfile(nameInput, jobInput)
+    .then((data) => {
+      profileTitle.textContent = data.name;
+      profileDescription.textContent = data.about;
+      closeModal(popupTypeEdit);
+    })
+    .finally(() => {
+      renderLoading(false, editProfileButton);
+    });
 };
 
 // Функция добавления новой карточки
 const handleNewCardFormSubmit = (evt) => {
   evt.preventDefault();
-  postNewCard(placeInput, urlInput).then((data) => {
-    placesList.prepend(createCard(data, removeCard, likeCard, () => openFullImage(data)))
-    addFormElement.reset();
-    closeModal(popupTypeNewCard);
-  })
+  renderLoading(true, newCardButton);
+  postNewCard(placeInput, urlInput)
+    .then((data) => {
+      placesList.prepend(
+        createCard(data, removeCard, likeCard, () => openFullImage(data))
+      );
+      addFormElement.reset();
+      closeModal(popupTypeNewCard);
+    })
+    .finally(() => {
+      renderLoading(false, newCardButton);
+    });
+};
+
+// Функция улучшения UX попапов
+const renderLoading = (isLoading, buttonElement) => {
+  if (isLoading) {
+    buttonElement.textContent = 'Сохранение...';
+  }
 };
 
 // Добавление всем попапам класса для плавности
@@ -115,14 +143,16 @@ Promise.all([getCadrs(), getUsers()]).then(([cards, users]) => {
 profileAvatar.addEventListener('click', () => {
   clearValidation(popupTypeAvatar, validationConfig);
   openModal(popupTypeAvatar);
+  saveButton.textContent = 'Сохранить';
   getMyData().then((data) => {
-    avatarUrlInput.value = data.avatar
-  })
+    avatarUrlInput.value = data.avatar;
+  });
 });
 
 editButton.addEventListener('click', () => {
   clearValidation(editFormElement, validationConfig);
   openModal(popupTypeEdit);
+  editProfileButton.textContent = 'Сохранить';
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 });
@@ -130,6 +160,7 @@ editButton.addEventListener('click', () => {
 addButton.addEventListener('click', () => {
   clearValidation(popupTypeNewCard, validationConfig);
   openModal(popupTypeNewCard);
+  newCardButton.textContent = 'Сохранить';
   addFormElement.reset();
 });
 

@@ -1,21 +1,21 @@
 const fetchConfig = {
   baseUrl: 'https://nomoreparties.co/v1/wff-cohort-6',
-  autorisation: '70ed6172-e461-46e4-96d0-911b4afd383e',
+  headers: {
+    authorization: '70ed6172-e461-46e4-96d0-911b4afd383e',
+    'Content-Type': 'application/json',
+  },
 };
 
 // Получание карточек
 const getCadrs = () => {
   return fetch(`${fetchConfig.baseUrl}/cards`, {
     method: 'GET',
-    headers: {
-      authorization: fetchConfig.autorisation,
-    },
+    headers: fetchConfig.headers,
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -27,15 +27,12 @@ const getCadrs = () => {
 const getUsers = () => {
   return fetch(`${fetchConfig.baseUrl}/users`, {
     method: 'GET',
-    headers: {
-      authorization: fetchConfig.autorisation,
-    },
+    headers: fetchConfig.headers,
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -47,15 +44,12 @@ const getUsers = () => {
 const getMyData = () => {
   return fetch(`${fetchConfig.baseUrl}/users/me`, {
     method: 'GET',
-    headers: {
-      authorization: fetchConfig.autorisation,
-    },
+    headers: fetchConfig.headers,
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -67,10 +61,7 @@ const getMyData = () => {
 const editProfile = (userName, userAbout) => {
   return fetch(`${fetchConfig.baseUrl}/users/me`, {
     method: 'PATCH',
-    headers: {
-      authorization: fetchConfig.autorisation,
-      'Content-Type': 'application/json',
-    },
+    headers: fetchConfig.headers,
     body: JSON.stringify({
       name: userName.value,
       about: userAbout.value,
@@ -80,7 +71,6 @@ const editProfile = (userName, userAbout) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -92,10 +82,7 @@ const editProfile = (userName, userAbout) => {
 const editAvatar = (userAvatar) => {
   return fetch(`${fetchConfig.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
-    headers: {
-      authorization: fetchConfig.autorisation,
-      'Content-Type': 'application/json',
-    },
+    headers: fetchConfig.headers,
     body: JSON.stringify({
       avatar: userAvatar.value,
     }),
@@ -104,7 +91,6 @@ const editAvatar = (userAvatar) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -116,10 +102,7 @@ const editAvatar = (userAvatar) => {
 const postNewCard = (cardTitle, cardLink) => {
   return fetch(`${fetchConfig.baseUrl}/cards`, {
     method: 'POST',
-    headers: {
-      authorization: fetchConfig.autorisation,
-      'Content-Type': 'application/json',
-    },
+    headers: fetchConfig.headers,
     body: JSON.stringify({
       name: cardTitle.value,
       link: cardLink.value,
@@ -129,7 +112,6 @@ const postNewCard = (cardTitle, cardLink) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -141,15 +123,12 @@ const postNewCard = (cardTitle, cardLink) => {
 const likeCardFetch = (cardId) => {
   return fetch(`${fetchConfig.baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
-    headers: {
-      authorization: fetchConfig.autorisation,
-    },
+    headers: fetchConfig.headers,
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -161,15 +140,12 @@ const likeCardFetch = (cardId) => {
 const unlikeCardFetch = (cardId) => {
   return fetch(`${fetchConfig.baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
-    headers: {
-      authorization: fetchConfig.autorisation,
-    },
+    headers: fetchConfig.headers,
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -181,15 +157,12 @@ const unlikeCardFetch = (cardId) => {
 const deleteCard = (cardId) => {
   return fetch(`${fetchConfig.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
-    headers: {
-      authorization: fetchConfig.autorisation,
-    },
+    headers: fetchConfig.headers,
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
-
       return response.json();
     })
     .catch((err) => {
@@ -206,5 +179,5 @@ export {
   deleteCard,
   editAvatar,
   likeCardFetch,
-  unlikeCardFetch
+  unlikeCardFetch,
 };

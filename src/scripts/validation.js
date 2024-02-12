@@ -19,13 +19,13 @@ const isValid = (formElement, inputElement) => {
   // Не соответствует паттерну
   if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-  // Пусто поле
+    // Пусто поле
   } else if (inputElement.validity.valueMissing) {
-    inputElement.setCustomValidity("Вы пропустили это поле.");
+    inputElement.setCustomValidity('Вы пропустили это поле.');
   } else {
     inputElement.setCustomValidity('');
   }
-  
+
   if (!inputElement.validity.valid) {
     showInputError(formElement, inputElement, inputElement.validationMessage);
   } else {
@@ -77,13 +77,15 @@ const toggleButtonState = (inputList, buttonElement) => {
 
 // Функция очистки валидации
 const clearValidation = (formElement, config) => {
-  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
-  const button = formElement.querySelector(config.submitButtonSelector)
+  const inputList = Array.from(
+    formElement.querySelectorAll(config.inputSelector)
+  );
+  const button = formElement.querySelector(config.submitButtonSelector);
 
   inputList.forEach((input) => {
     hideInputError(formElement, input);
-  })
-  button.classList.add(config.inactiveButtonClass)
+  });
+  button.classList.add(config.inactiveButtonClass);
 };
 
 export { enableValidation, clearValidation };
