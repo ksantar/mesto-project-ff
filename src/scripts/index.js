@@ -4,7 +4,6 @@ import { openModal, closeModal, closeByOverlay } from '../scripts/modal.js';
 import { enableValidation, clearValidation } from '../scripts/validation.js';
 import {
   getCadrs,
-  getUsers,
   getMyData,
   editProfile,
   postNewCard,
@@ -76,13 +75,16 @@ const openFullImage = (cardData) => {
 const handleEditAvatarSubmit = (evt) => {
   evt.preventDefault();
   renderLoading(true, saveButton);
-  editAvatar(avatarUrlInput)
+  editAvatar(avatarUrlInput.value)
     .then((data) => {
       profileAvatar.style = `background-image: url('${data.avatar}')`;
       closeModal(popupTypeAvatar);
     })
     .finally(() => {
       renderLoading(false, saveButton);
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
@@ -90,7 +92,7 @@ const handleEditAvatarSubmit = (evt) => {
 const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
   renderLoading(true, editProfileButton);
-  editProfile(nameInput, jobInput)
+  editProfile(nameInput.value, jobInput.value)
     .then((data) => {
       profileTitle.textContent = data.name;
       profileDescription.textContent = data.about;
@@ -98,6 +100,9 @@ const handleEditFormSubmit = (evt) => {
     })
     .finally(() => {
       renderLoading(false, editProfileButton);
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
@@ -105,24 +110,25 @@ const handleEditFormSubmit = (evt) => {
 const handleNewCardFormSubmit = (evt) => {
   evt.preventDefault();
   renderLoading(true, newCardButton);
-  postNewCard(placeInput, urlInput)
+  postNewCard(placeInput.value, urlInput.value)
     .then((data) => {
       placesList.prepend(
-        createCard(data, removeCard, likeCard, () => openFullImage(data))
+        createCard(data, userId, removeCard, likeCard, openFullImage)
       );
       addFormElement.reset();
       closeModal(popupTypeNewCard);
     })
     .finally(() => {
       renderLoading(false, newCardButton);
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
 // Функция улучшения UX попапов
 const renderLoading = (isLoading, buttonElement) => {
-  if (isLoading) {
-    buttonElement.textContent = 'Сохранение...';
-  }
+  buttonElement.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
 };
 
 // Добавление всем попапам класса для плавности
@@ -131,28 +137,41 @@ popups.forEach((element) => {
 });
 
 // Начальные карточки
-Promise.all([getCadrs(), getUsers()]).then(([cards, users]) => {
-  cards.forEach((elem) => {
-    placesList.append(
-      createCard(elem, removeCard, likeCard, () => openFullImage(elem))
-    );
+let userId;
+Promise.all([getCadrs(), getMyData()])
+  .then(([cards, data]) => {
+    userId = data._id;
+    cards.forEach((elem) => {
+      profileTitle.textContent = data.name;
+      profileDescription.textContent = data.about;
+      profileAvatar.style = `background-image: url('${data.avatar}')`;
+      placesList.append(
+        createCard(elem, userId, removeCard, likeCard, openFullImage)
+      );
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-});
 
 // Открытие попапов
 profileAvatar.addEventListener('click', () => {
   clearValidation(popupTypeAvatar, validationConfig);
   openModal(popupTypeAvatar);
-  saveButton.textContent = 'Сохранить';
-  getMyData().then((data) => {
-    avatarUrlInput.value = data.avatar;
-  });
+
+  getMyData()
+    .then((data) => {
+      avatarUrlInput.value = data.avatar;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 editButton.addEventListener('click', () => {
   clearValidation(editFormElement, validationConfig);
   openModal(popupTypeEdit);
-  editProfileButton.textContent = 'Сохранить';
+
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 });
@@ -160,7 +179,7 @@ editButton.addEventListener('click', () => {
 addButton.addEventListener('click', () => {
   clearValidation(popupTypeNewCard, validationConfig);
   openModal(popupTypeNewCard);
-  newCardButton.textContent = 'Сохранить';
+
   addFormElement.reset();
 });
 
@@ -182,10 +201,3 @@ addFormElement.addEventListener('submit', handleNewCardFormSubmit);
 
 // Вызов валидации
 enableValidation(validationConfig);
-
-// Получение данных профиля
-getMyData().then((data) => {
-  profileTitle.textContent = data.name;
-  profileDescription.textContent = data.about;
-  profileAvatar.style = `background-image: url('${data.avatar}')`;
-});

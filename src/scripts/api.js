@@ -6,38 +6,20 @@ const fetchConfig = {
   },
 };
 
+// Функция обработки запроса
+const handleResponse = (res) => {
+  if (!res.ok) {
+    throw new Error(`Ошибка: ${res.status}`);
+  }
+  return res.json();
+};
+
 // Получание карточек
 const getCadrs = () => {
   return fetch(`${fetchConfig.baseUrl}/cards`, {
     method: 'GET',
     headers: fetchConfig.headers,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-// Получение пользователей
-const getUsers = () => {
-  return fetch(`${fetchConfig.baseUrl}/users`, {
-    method: 'GET',
-    headers: fetchConfig.headers,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 // Получить мои данные
@@ -45,16 +27,7 @@ const getMyData = () => {
   return fetch(`${fetchConfig.baseUrl}/users/me`, {
     method: 'GET',
     headers: fetchConfig.headers,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 // Редактирование профиля
@@ -63,19 +36,10 @@ const editProfile = (userName, userAbout) => {
     method: 'PATCH',
     headers: fetchConfig.headers,
     body: JSON.stringify({
-      name: userName.value,
-      about: userAbout.value,
+      name: userName,
+      about: userAbout,
     }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 // Редактирование аватара
@@ -84,18 +48,9 @@ const editAvatar = (userAvatar) => {
     method: 'PATCH',
     headers: fetchConfig.headers,
     body: JSON.stringify({
-      avatar: userAvatar.value,
+      avatar: userAvatar,
     }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 // Добавление новой карточки
@@ -104,19 +59,10 @@ const postNewCard = (cardTitle, cardLink) => {
     method: 'POST',
     headers: fetchConfig.headers,
     body: JSON.stringify({
-      name: cardTitle.value,
-      link: cardLink.value,
+      name: cardTitle,
+      link: cardLink,
     }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 // Лайк карточки
@@ -124,16 +70,7 @@ const likeCardFetch = (cardId) => {
   return fetch(`${fetchConfig.baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
     headers: fetchConfig.headers,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 // Анлайк карточки
@@ -141,16 +78,7 @@ const unlikeCardFetch = (cardId) => {
   return fetch(`${fetchConfig.baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: fetchConfig.headers,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 // Удаление карточки
@@ -158,21 +86,11 @@ const deleteCard = (cardId) => {
   return fetch(`${fetchConfig.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
     headers: fetchConfig.headers,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((response) => handleResponse(response));
 };
 
 export {
   getCadrs,
-  getUsers,
   getMyData,
   editProfile,
   postNewCard,
