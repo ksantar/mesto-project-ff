@@ -1,13 +1,3 @@
-// Конфиг
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_inactive',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible',
-};
-
 // Функция отображения ошибки заполнения инпутов
 const showInputError = (formElement, inputElement, errorMessage, config) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -25,7 +15,7 @@ const hideInputError = (formElement, inputElement, config) => {
 };
 
 // Функция проверки на валидность введённых данных
-const isValid = (formElement, inputElement) => {
+const isValid = (formElement, inputElement, config) => {
   // Не соответствует паттерну
   if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
@@ -38,10 +28,10 @@ const isValid = (formElement, inputElement) => {
       formElement,
       inputElement,
       inputElement.validationMessage,
-      validationConfig
+      config
     );
   } else {
-    hideInputError(formElement, inputElement, validationConfig);
+    hideInputError(formElement, inputElement, config);
   }
 };
 
@@ -52,12 +42,12 @@ const setEventListeners = (formElement, config) => {
   );
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
 
-  toggleButtonState(inputList, buttonElement, validationConfig);
+  toggleButtonState(inputList, buttonElement, config);
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', () => {
-      isValid(formElement, inputElement);
-      toggleButtonState(inputList, buttonElement, validationConfig);
+      isValid(formElement, inputElement, config);
+      toggleButtonState(inputList, buttonElement, config);
     });
   });
 };
@@ -67,7 +57,7 @@ const enableValidation = (config) => {
   const formList = Array.from(document.querySelectorAll(config.formSelector));
 
   formList.forEach((formElement) => {
-    setEventListeners(formElement, validationConfig);
+    setEventListeners(formElement, config);
   });
 };
 
@@ -87,7 +77,7 @@ const disableSubmitButton = (button, config) => {
 // Функция включения и отключения кнопки
 const toggleButtonState = (inputList, buttonElement, config) => {
   if (hasInvalidInput(inputList)) {
-    disableSubmitButton(buttonElement, validationConfig);
+    disableSubmitButton(buttonElement, config);
   } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(config.inactiveButtonClass);
@@ -102,9 +92,9 @@ const clearValidation = (formElement, config) => {
   const button = formElement.querySelector(config.submitButtonSelector);
 
   inputList.forEach((input) => {
-    hideInputError(formElement, input, validationConfig);
+    hideInputError(formElement, input, config);
   });
-  disableSubmitButton(button, validationConfig);
+  disableSubmitButton(button, config);
 };
 
 export { enableValidation, clearValidation };

@@ -45,9 +45,11 @@ const createCard = (cardData, user, remove, like, openCard) => {
 };
 
 const removeCard = (event, cardId) => {
-  deleteCard(cardId).then(() => {
-    event.target.closest('.places__item').remove();
-  });
+  deleteCard(cardId)
+    .then(() => {
+      event.target.closest('.places__item').remove();
+    })
+    .catch((err) => console.log(err));
 };
 
 const likeCard = (event, cardId, count) => {
